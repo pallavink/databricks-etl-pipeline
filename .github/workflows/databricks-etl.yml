@@ -34,6 +34,9 @@ jobs:
       - name: Install Databricks CLI
         run: pip install databricks-cli
 
+      - name: Check Databricks CLI version
+        run: databricks --version
+        
       - name: Configure Databricks CLI
         run: |
           mkdir -p ~/.databricks
@@ -41,7 +44,7 @@ jobs:
           echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databricks/config
           echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databricks/config
 
-      - name: List root workspace (example deployment step)
+      - name: List root workspace
         run: databricks workspace list /
 
       - name: Deploy notebook to workspace
