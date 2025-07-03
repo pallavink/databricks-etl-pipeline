@@ -43,11 +43,16 @@ jobs:
           echo "[DEFAULT]" > ~/.databricks/config
           echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databricks/config
           echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databricks/config
+
+      - name: Verify Databricks CLI config
+        run: |
+          cat ~/.databricks/config
+          databricks workspace list /
+
+      - name: List root workspace
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-
-      - name: List root workspace
         run: databricks workspace list /
 
       - name: Deploy notebook to workspace
