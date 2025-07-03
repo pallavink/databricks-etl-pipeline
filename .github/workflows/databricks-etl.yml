@@ -59,6 +59,9 @@ jobs:
           databricks workspace import --language PYTHON --format SOURCE --overwrite notebooks/etl_pipeline.py /Workspace/etl_pipeline.py
       
       - name: Create or update Databricks job
+        env:
+            DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+            DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           set +e
           databricks jobs create --json-file .databricks/config/job-config.json
@@ -70,6 +73,9 @@ jobs:
           fi
           set -e
       - name: Run ETL job
+        env:
+            DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+            DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           databricks jobs run-now --job-id $JOB_ID
 
