@@ -36,13 +36,15 @@ jobs:
 
       - name: Check Databricks CLI version
         run: databricks --version
-        
+
       - name: Configure Databricks CLI
         run: |
           mkdir -p ~/.databricks
           echo "[DEFAULT]" > ~/.databricks/config
           echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databricks/config
           echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databricks/config
+
+          databricks configure
 
       - name: List root workspace
         run: databricks workspace list /
