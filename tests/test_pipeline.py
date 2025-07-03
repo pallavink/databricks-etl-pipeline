@@ -4,7 +4,13 @@ from pyspark.sql import SparkSession
 
 @pytest.fixture(scope="session")
 def spark():
-    return SparkSession.builder.appName("ETLTest").getOrCreate()
+    return (
+        SparkSession.builder
+        .appName("ETLTest")
+        .config("spark.sql.catalogImplementation", "in-memory")  # or "hive" or "unity" depending on your setup
+        .config("spark.sql.catalog.assignment", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+        .getOrCreate()
+    )
 
 
 def test_raw_tables_exist(spark):
