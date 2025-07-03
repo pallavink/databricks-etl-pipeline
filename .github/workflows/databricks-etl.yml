@@ -86,6 +86,8 @@ jobs:
             DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
             DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
+          #Retrieve job_id 
+          JOB_ID=$(databricks jobs list | grep 'daily-etl-pipeline' | awk '{print $1}')
           databricks jobs run-now --job-id $JOB_ID
 
       - name: Run ETL Tests with Pytest
