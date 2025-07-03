@@ -13,11 +13,15 @@ def spark():
 
 @pytest.fixture(scope="session")
 def databricks_client():
+    print("HOST:", os.getenv("DATABRICKS_HOST"))
+    print("HTTP PATH:", os.getenv("DATABRICKS_HTTP_PATH"))
+    print("TOKEN:", "set" if os.getenv("DATABRICKS_TOKEN") else "NOT SET")
     conn = sql.connect(
         server_hostname=os.getenv("DATABRICKS_HOST"),
         http_path=os.getenv("DATABRICKS_HTTP_PATH"),
         access_token=os.getenv("DATABRICKS_TOKEN"),
     )
+    print("Connected")
     yield conn
     conn.close()
 
