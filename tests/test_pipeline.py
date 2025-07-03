@@ -7,8 +7,8 @@ def spark():
     return (
         SparkSession.builder
         .appName("ETLTest")
-        .config("spark.sql.catalogImplementation", "in-memory")  # or "hive" or "unity" depending on your setup
-        .config("spark.sql.catalog.assignment", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+        .config("spark.sql.catalogImplementation", "unity")
+        .enableHiveSupport()
         .getOrCreate()
     )
 
