@@ -55,6 +55,9 @@ jobs:
         run: databricks workspace list /
 
       - name: Deploy notebook to workspace
+        env:
+              DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+              DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           databricks workspace import --language PYTHON --format SOURCE --overwrite notebooks/etl_pipeline.py /Workspace/etl_pipeline.py
       
