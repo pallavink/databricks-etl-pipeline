@@ -43,8 +43,9 @@ jobs:
           echo "[DEFAULT]" > ~/.databricks/config
           echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databricks/config
           echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databricks/config
-
-          databricks configure
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: List root workspace
         run: databricks workspace list /
