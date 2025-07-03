@@ -68,12 +68,17 @@ jobs:
         run: |
           set +e
           databricks jobs configure --version=2.1
-          databricks jobs create --json-file .databricks/config/job-config.json
-          if [ $? -ne 0 ]; then
-            echo "Job likely exists, updating..."
+          CREATE_OUTPUT=$(databricks jobs create --json-file .databricks/config/job-config.json 2>&1)
+          CREATE_STATUS=$?
+
+          if [ $CREATE_STATUS -ne 0 ]; then
+            echo "Job creation failed with error:"
+            echo "$CREATE_OUTPUT"
+
+            echo "Trying to update existing job if it exists..."
             #Retrieve job_id 
             JOB_ID=$(databricks jobs list | grep 'daily-etl-pipeline' | awk '{print $1}')
-            databricks jobs update --job-id $JOB_ID --json-file .databricks/config/job-config.json
+            databricks jobs reset --job-id $JOB_ID --json-file .databricks/config/job-config.json
           fi
           set -e
       - name: Run ETL job
