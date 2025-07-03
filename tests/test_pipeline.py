@@ -9,8 +9,6 @@ def spark():
         .appName("ETLTest")
         .getOrCreate()
     )
-print(spark.conf.get("spark.sql.catalogImplementation"))
-
 
 def test_raw_tables_exist(spark):
     spark.sql("USE CATALOG assignment")
