@@ -62,34 +62,36 @@ jobs:
           databricks workspace import --language PYTHON --format SOURCE --overwrite notebooks/etl_pipeline.py /Workspace/etl_pipeline.py
       
       - name: Create or update Databricks job
+        id: create-or-update
         env:
-            DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-            DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          set +e
-          databricks jobs configure --version=2.1
-          CREATE_OUTPUT=$(databricks jobs create --json-file .databricks/config/job-config.json 2>&1)
-          CREATE_STATUS=$?
+          set -e
+          echo "Checking for existing job ID..."
+          JOB_ID=$(databricks jobs list --output JSON | jq -r '.jobs[] | select(.settings.name=="daily-etl-pipeline") | .job_id')
 
-          if [ $CREATE_STATUS -ne 0 ]; then
-            echo "Job creation failed with error:"
-            echo "$CREATE_OUTPUT"
-
-            echo "Trying to update existing job if it exists..."
-            #Retrieve job_id 
-            JOB_ID=$(databricks jobs list | grep 'daily-etl-pipeline' | awk '{print $1}')
+          if [ -z "$JOB_ID" ]; then
+            echo "Job not found. Creating..."
+            CREATE_OUTPUT=$(databricks jobs create --json-file .databricks/config/job-config.json --version 2.1)
+            JOB_ID=$(echo "$CREATE_OUTPUT" | jq -r '.job_id')
+            echo "Created job with ID: $JOB_ID"
+          else
+            echo "Job exists with ID: $JOB_ID. Resetting..."
             databricks jobs reset --job-id $JOB_ID --json-file .databricks/config/job-config.json
           fi
-          set -e
+
+          # Save JOB_ID for next step
+          echo "job_id=$JOB_ID" >> $GITHUB_OUTPUT
+
       - name: Run ETL job
         env:
-            DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-            DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          #Retrieve job_id 
-          JOB_ID=$(databricks jobs list | grep 'daily-etl-pipeline' | awk '{print $1}')
-          databricks jobs run-now --job-id $JOB_ID
-
+          echo "Running job ID: ${{ steps.create-or-update.outputs.job_id }}"
+          databricks jobs run-now --job-id ${{ steps.create-or-update.outputs.job_id }}
+          
       - name: Run ETL Tests with Pytest
         run: |
           pip install -r requirements.txt
