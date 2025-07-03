@@ -1,8 +1,11 @@
 {
   "name": "daily-etl-pipeline",
-  "job_clusters": [
+  "tasks": [
     {
-      "job_cluster_key": "serverless-cluster",
+      "task_key": "etl-task",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/pallavink53@gmail.com/ETL"
+      },
       "new_cluster": {
         "spark_version": "13.3.x-scala2.12",
         "num_workers": 1,
@@ -11,15 +14,6 @@
         },
         "data_security_mode": "SINGLE_USER"
       }
-    }
-  ],
-  "tasks": [
-    {
-      "task_key": "etl-task",
-      "notebook_task": {
-        "notebook_path": "/Workspace/Users/pallavink53@gmail.com/ETL"
-      },
-      "job_cluster_key": "serverless-cluster"
     }
   ],
   "schedule": {
