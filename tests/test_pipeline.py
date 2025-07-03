@@ -11,16 +11,18 @@ def spark():
         .enableHiveSupport()
         .getOrCreate()
     )
+print(spark.conf.get("spark.sql.catalogImplementation"))
 
 
 def test_raw_tables_exist(spark):
-    tables = spark.sql("SHOW TABLES IN assignment.raw").select("tableName").rdd.flatMap(lambda x: x).collect()
+    spark.sql("USE CATALOG assignment")
+    tables = spark.sql("SHOW TABLES IN raw").select("tableName").rdd.flatMap(lambda x: x).collect()
     for expected in ["airports", "countries", "runways"]:
         assert expected in tables, f"{expected} table is missing from assignment.raw"
 
 
 def test_curated_views_exist(spark):
-    views = spark.sql("SHOW TABLES IN assignment.curated").select("tableName").rdd.flatMap(lambda x: x).collect()
+    views = spark.sql("SHOW TABLES IN curated").select("tableName").rdd.flatMap(lambda x: x).collect()
     assert "airport_runway_country" in views
     assert "airport_counts_per_country" in views
 
