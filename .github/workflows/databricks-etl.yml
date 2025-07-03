@@ -47,7 +47,6 @@ jobs:
       - name: Verify Databricks CLI config
         run: |
           cat ~/.databricks/config
-          databricks workspace list /
 
       - name: List root workspace
         env:
