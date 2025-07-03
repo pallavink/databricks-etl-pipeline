@@ -93,6 +93,10 @@ jobs:
           databricks jobs run-now --job-id ${{ steps.create-or-update.outputs.job_id }}
 
       - name: Test Databricks connectivity
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
         run: |
           echo "Host: $DATABRICKS_HOST"
           echo "Path: $DATABRICKS_HTTP_PATH"
