@@ -3,13 +3,7 @@ from pyspark.sql import SparkSession
 from databricks import sql
 import os
 
-@pytest.fixture(scope="session")
-def spark():
-    return (
-        SparkSession.builder
-        .appName("ETLTest")
-        .getOrCreate()
-    )
+print("Before fixtures")
 
 @pytest.fixture(scope="session")
 def databricks_client():
@@ -24,21 +18,6 @@ def databricks_client():
     print("Connected")
     yield conn
     conn.close()
-
-def test_raw_tables_exist_spark(spark):
-
-    tables_df = spark.sql("SHOW TABLES IN assignment.raw")
-    tables = tables_df.select("tableName").rdd.flatMap(lambda x: x).collect()
-    
-    for expected in ["airports", "countries", "runways"]:
-        assert expected in tables, f"{expected} table is missing from assignment.raw"
-
-def test_curated_views_exist_spark(spark):
-    views_df = spark.sql("SHOW TABLES IN assignment.curated")
-    views = views_df.select("tableName").rdd.flatMap(lambda x: x).collect()
-    
-    assert "airport_runway_country" in views
-    assert "airport_counts_per_country" in views
 
 def test_raw_tables_exist_sql_connector(databricks_client):
     cursor = databricks_client.cursor()
