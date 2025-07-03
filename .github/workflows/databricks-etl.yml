@@ -91,8 +91,11 @@ jobs:
         run: |
           echo "Running job ID: ${{ steps.create-or-update.outputs.job_id }}"
           databricks jobs run-now --job-id ${{ steps.create-or-update.outputs.job_id }}
-          
+
       - name: Run ETL Tests with Pytest
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           pip install -r requirements.txt
           pytest tests/
