@@ -7,8 +7,6 @@ def spark():
     return (
         SparkSession.builder
         .appName("ETLTest")
-        .config("spark.sql.catalogImplementation", "unity")
-        .enableHiveSupport()
         .getOrCreate()
     )
 print(spark.conf.get("spark.sql.catalogImplementation"))
