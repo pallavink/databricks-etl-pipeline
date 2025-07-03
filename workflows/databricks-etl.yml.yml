@@ -1,0 +1,70 @@
+name: Databricks ETL CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci-setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+  deploy-to-databricks:
+    needs: ci-setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
+
+      - name: Configure Databricks CLI
+        run: |
+          mkdir -p ~/.databricks
+          echo "[DEFAULT]" > ~/.databricks/config
+          echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databricks/config
+          echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databricks/config
+
+      - name: List root workspace (example deployment step)
+        run: databricks workspace list /
+
+      - name: Deploy notebook to workspace
+        run: |
+          databricks workspace import notebooks/etl_pipeline.py /Workspace/etl_pipeline.py --format SOURCE --overwrite
+
+      
+      - name: Create or update Databricks job
+        run: |
+          set +e
+          databricks jobs create --json-file .databricks/config/job-config.json
+          if [ $? -ne 0 ]; then
+            echo "Job likely exists, updating..."
+            #Retrieve job_id 
+            JOB_ID=$(databricks jobs list | grep 'daily-etl-pipeline' | awk '{print $1}')
+            databricks jobs reset --job-id $JOB_ID --json-file .databricks/config/job-config.json
+          fi
+          set -e
+      - name: Run ETL job
+        run: |
+          databricks jobs run-now --job-id $JOB_ID
+
+      - name: Run ETL Tests with Pytest
+        run: |
+          pip install -r requirements.txt
+          pytest tests/

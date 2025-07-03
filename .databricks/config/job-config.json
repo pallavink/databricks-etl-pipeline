@@ -1,0 +1,16 @@
+{
+  "name": "daily-etl-pipeline",
+  "new_cluster": {
+    "spark_version": "12.2.x-scala2.12",   
+    "node_type_id": "Standard_DS3_v2",     
+    "num_workers": 1
+  },
+  "notebook_task": {
+    "notebook_path": "/Workspace/Users/pallavink53@gmail.com/ETL"
+  },
+  "schedule": {
+    "quartz_cron_expression": "0 0 6 * * ?",
+    "timezone_id": "UTC",
+    "pause_status": "UNPAUSED"
+  }
+}
