@@ -13,9 +13,15 @@
       }
     }
   ],
-  "notebook_task": {
-    "notebook_path": "/Workspace/Users/pallavink53@gmail.com/ETL"
-  },
+  "tasks": [
+    {
+      "task_key": "etl-task",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/pallavink53@gmail.com/ETL"
+      },
+      "job_cluster_key": "serverless-cluster"
+    }
+  ],
   "schedule": {
     "quartz_cron_expression": "0 0 6 * * ?",
     "timezone_id": "UTC",
