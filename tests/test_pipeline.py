@@ -3,6 +3,14 @@ from pyspark.sql import SparkSession
 from databricks import sql
 import os
 
+conn = sql.connect(
+    server_hostname=os.getenv("DATABRICKS_HOST"),
+    http_path=os.getenv("DATABRICKS_HTTP_PATH"),
+    access_token=os.getenv("DATABRICKS_TOKEN"),
+)
+print("Connection succeeded")
+conn.close()
+
 print("Before fixtures")
 
 @pytest.fixture(scope="session")
