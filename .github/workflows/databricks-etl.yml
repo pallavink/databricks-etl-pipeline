@@ -56,8 +56,7 @@ jobs:
 
       - name: Deploy notebook to workspace
         run: |
-          databricks workspace import notebooks/etl_pipeline.py /Workspace/etl_pipeline.py --format SOURCE --overwrite
-
+          databricks workspace import --language PYTHON --format SOURCE --overwrite notebooks/etl_pipeline.py /Workspace/etl_pipeline.py
       
       - name: Create or update Databricks job
         run: |
