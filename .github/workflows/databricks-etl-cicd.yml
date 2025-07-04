@@ -59,7 +59,7 @@ jobs:
               DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
               DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          databricks workspace import --language PYTHON --format SOURCE --overwrite notebooks/etl_pipeline.py /Workspace/etl_pipeline.py
+          databricks workspace import --language PYTHON --format SOURCE --overwrite notebooks/etl_pipeline.py /Workspace/Users/pallavink53@gmail.com/ETL
       
       - name: Create or update Databricks job
         id: create-or-update
