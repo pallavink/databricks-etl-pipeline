@@ -50,6 +50,8 @@ This project implements a data pipeline to ingest, transform, and analyze airpor
      ```bash
      pytest tests/
      ```
+   - Change the notebook path to desired path in job_config.json     
+     "notebook_path": "/Workspace/Users/pallavink53@gmail.com/ETL" 
 
 4. **Pipeline Execution**
    - The ETL pipeline ingests data from public CSV URLs.
