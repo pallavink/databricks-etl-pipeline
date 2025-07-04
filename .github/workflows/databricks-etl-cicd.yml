@@ -31,8 +31,8 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install required libraries
-        run: pip install -r requirements.txt
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
 
       - name: Check Databricks CLI version
         run: databricks --version
@@ -100,30 +100,21 @@ jobs:
         run: |
           echo "Host: $DATABRICKS_HOST"
           echo "Path: $DATABRICKS_HTTP_PATH"
-          echo "token: $DATABRICKS_TOKEN"
-
-          python <<EOF
+          python -c "
           import os
           from databricks import sql
-          host = os.environ.get("DATABRICKS_HOST")
-          path = os.environ.get("DATABRICKS_HTTP_PATH")
-          token = os.environ.get("DATABRICKS_TOKEN")
 
-          print("Connecting to:", host)
-          print("HTTP path:", path)
-          print("Token is set:", bool(token))
-           
           try:
               conn = sql.connect(
-                  server_hostname=host,
-                  http_path=path,
-                  access_token=token
+                  server_hostname=os.getenv('DATABRICKS_HOST'),
+                  http_path=os.getenv('DATABRICKS_HTTP_PATH'),
+                  access_token=os.getenv('DATABRICKS_TOKEN')
               )
               print('Connection OK')
               conn.close()
           except Exception as e:
               print('Failed:', e)
-          EOF
+          "
       - name: Run ETL Tests with Pytest
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}

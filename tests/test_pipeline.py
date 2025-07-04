@@ -3,25 +3,14 @@ from pyspark.sql import SparkSession
 from databricks import sql
 import os
 
-conn = sql.connect(
-    server_hostname=os.getenv("DATABRICKS_HOST"),
-    http_path=os.getenv("DATABRICKS_HTTP_PATH"),
-    access_token=os.getenv("DATABRICKS_TOKEN"),
-)
-print("Connection succeeded")
-conn.close()
-
 print("Before fixtures")
 
 @pytest.fixture(scope="session")
 def databricks_client():
-    print("HOST:", os.getenv("DATABRICKS_HOST"))
-    print("HTTP PATH:", os.getenv("DATABRICKS_HTTP_PATH"))
-    print("TOKEN:", "set" if os.getenv("DATABRICKS_TOKEN") else "NOT SET")
     conn = sql.connect(
-        server_hostname=os.getenv("DATABRICKS_HOST"),
-        http_path=os.getenv("DATABRICKS_HTTP_PATH"),
-        access_token=os.getenv("DATABRICKS_TOKEN"),
+        server_hostname = os.environ["DATABRICKS_SERVER_HOSTNAME"],
+        http_path = os.environ["DATABRICKS_HTTP_PATH"],
+        access_token = os.environ["DATABRICKS_TOKEN"]
     )
     print("Connected")
     yield conn
