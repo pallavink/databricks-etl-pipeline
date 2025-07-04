@@ -3,8 +3,7 @@ from pyspark.sql import SparkSession
 from databricks import sql
 import os
 
-print("Before fixtures")
-
+#Connect using databricks client
 @pytest.fixture(scope="session")
 def databricks_client():
     conn = sql.connect(
@@ -16,6 +15,7 @@ def databricks_client():
     yield conn
     conn.close()
 
+#Test to see if raw tables are made or not
 def test_raw_tables_exist_sql_connector(databricks_client):
     cursor = databricks_client.cursor()
     cursor.execute("SHOW TABLES IN assignment.raw")
@@ -24,6 +24,7 @@ def test_raw_tables_exist_sql_connector(databricks_client):
     for expected in ["airports", "countries", "runways"]:
         assert expected in tables, f"{expected} table is missing from assignment.raw"
 
+#Test to see if curated views are made or not
 def test_curated_views_exist_sql_connector(databricks_client):
     cursor = databricks_client.cursor()
     cursor.execute("SHOW TABLES IN assignment.curated")

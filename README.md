@@ -12,7 +12,7 @@ This project implements a data pipeline to ingest, transform, and analyze airpor
   - Creates catalog and schemas
   - Ingests CSV files from public URLs into raw Delta tables
   - Transforms data with SQL views in curated schemas
-  - Answers business questions via SQL queries
+  - Answers business questions via SQL queries in file .databricks/Analyse_query_sql/query.sql
 
 - **.databricks/config/job-config.json** Job configuration to create and schedule the Databricks job with a new cluster.
 
@@ -39,6 +39,7 @@ This project implements a data pipeline to ingest, transform, and analyze airpor
    - Add the following repository secrets in GitHub:
      - `DATABRICKS_HOST` Your Databricks workspace URL.
      - `DATABRICKS_TOKEN` Your Databricks personal access token.
+     - `DATABRICKS_HTTP_PATH` HTTP path of the cluster(in this case serverless warehouse)
 
 3. **Local Testing**
    - Install dependencies locally:
@@ -63,8 +64,7 @@ This project implements a data pipeline to ingest, transform, and analyze airpor
 
 ## Assumptions & Notes
 
-- CSV data schemas are assumed consistent with source URLs.
-- `new_cluster` is used in the job config for Community Edition compatibility.
+- `serverless` is used in the job config since only this was available in the free version.
 - Basic validation tests check for table and view existence.
 - Production-ready enhancements could include data quality checks, more detailed tests, and error handling.
 
@@ -74,6 +74,7 @@ This project implements a data pipeline to ingest, transform, and analyze airpor
 - Limited access to cluster IDs in free Databricks tiers required use of new cluster creation for jobs.
 - CLI setup and authentication sometimes require careful environment configuration.
 - Scheduling and CI/CD integration requires coordination between Databricks and GitHub workflows.
+- Connection to databricks caused problems from the github workflow end.
 
 
 ## Improvement Ideas
@@ -87,6 +88,7 @@ This project implements a data pipeline to ingest, transform, and analyze airpor
 Assumed groups
     - data-engineers-group	- ETL developers with full access to assignment catalog and schemas.
     - data-analysts-group	- Business/data analysts with (read-only access) i.e. SELECT on assignment.curated views only.
+RBAC-setup.sql is made with these assumptions.
 
 ## Use of Language Models
 

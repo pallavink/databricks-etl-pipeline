@@ -32,12 +32,12 @@ df_runways.write.mode("overwrite").saveAsTable("assignment.raw.runways")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Transform data
+# MAGIC Transform and load data
 
 # COMMAND ----------
 
 
-# Create a joined view to simplify queries
+# Create a joined view to simplify queries 
 spark.sql("""
 CREATE OR REPLACE VIEW assignment.curated.airport_runway_country AS
 SELECT
@@ -59,56 +59,3 @@ FROM assignment.raw.airports a
 JOIN assignment.raw.countries c ON a.iso_country = c.code
 GROUP BY c.name
 """)
-
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC Answer Queries 
-# MAGIC - For each country with airports, list the details (width, length, airport name) of its longest and shortest runways.
-# MAGIC - Calculate the number of airports per country, identifying the top 3 and bottom 10 countries.
-
-# COMMAND ----------
-
-
-# Longest runway per country
-spark.sql("""
-SELECT country_name, airport_name, length_ft, width_ft
-FROM (
-  SELECT *,
-  ROW_NUMBER() OVER (PARTITION BY country_name ORDER BY length_ft DESC) AS rn
-  FROM assignment.curated.airport_runway_country
-) WHERE rn = 1
-""")
-
-# Shortest runway per country
-spark.sql("""
-SELECT country_name, airport_name, length_ft, width_ft
-FROM (
-  SELECT *,
-  ROW_NUMBER() OVER (PARTITION BY country_name ORDER BY length_ft ASC) AS rn
-  FROM assignment.curated.airport_runway_country
-) WHERE rn = 1
-""")
-
-
-# Top 3 countries that have the most airports
-spark.sql("""
-SELECT *
-FROM assignment.curated.airport_counts_per_country
-ORDER BY airport_count DESC
-LIMIT 3;
-""")
-
-
-# Bottom 10 countries that have least number of airports
-spark.sql("""
-SELECT *
-FROM assignment.curated.airport_counts_per_country
-WHERE airport_count > 0
-ORDER BY airport_count ASC
-LIMIT 10;
-""")
-
-
-print("ETL pipeline completed successfully with SQL transformations.")
