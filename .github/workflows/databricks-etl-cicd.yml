@@ -100,7 +100,8 @@ jobs:
         run: |
           echo "Host: $DATABRICKS_HOST"
           echo "Path: $DATABRICKS_HTTP_PATH"
-          python -c "
+          echo "token: $DATABRICKS_TOKEN"
+          python <<EOF
           import os
           from databricks import sql
 
@@ -114,7 +115,7 @@ jobs:
               conn.close()
           except Exception as e:
               print('Failed:', e)
-          "
+          EOF
       - name: Run ETL Tests with Pytest
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
