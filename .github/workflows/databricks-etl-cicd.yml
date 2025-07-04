@@ -101,15 +101,23 @@ jobs:
           echo "Host: $DATABRICKS_HOST"
           echo "Path: $DATABRICKS_HTTP_PATH"
           echo "token: $DATABRICKS_TOKEN"
+
           python <<EOF
           import os
           from databricks import sql
+          host = os.environ.get("DATABRICKS_HOST")
+          path = os.environ.get("DATABRICKS_HTTP_PATH")
+          token = os.environ.get("DATABRICKS_TOKEN")
 
+          print("Connecting to:", host)
+          print("HTTP path:", path)
+          print("Token is set:", bool(token))
+          
           try:
               conn = sql.connect(
-                  server_hostname = $DATABRICKS_HOST,
-                  http_path = $DATABRICKS_HTTP_PATH,
-                  access_token = $DATABRICKS_TOKEN
+                  server_hostname=host,
+                  http_path=path,
+                  access_token=token
               )
               print('Connection OK')
               conn.close()
