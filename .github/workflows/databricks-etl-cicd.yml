@@ -112,7 +112,7 @@ jobs:
           print("Connecting to:", host)
           print("HTTP path:", path)
           print("Token is set:", bool(token))
-          
+           
           try:
               conn = sql.connect(
                   server_hostname=host,
